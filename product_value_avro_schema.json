@@ -1,0 +1,28 @@
+{
+  "namespace": "com.buyonline.product",
+  "name": "Product",
+  "type": "record",
+  "fields": [
+    {
+      "name": "id",
+      "type": "int"
+    },
+    {
+      "name": "name",
+      "type": "string"
+    },
+    {
+      "name": "category",
+      "type": ["null", "string"],
+      "default": null
+    },
+    {
+      "name": "price",
+      "type": "double"
+    },
+    {
+      "name": "last_updated",
+      "type": "string"
+    }
+  ]
+}
