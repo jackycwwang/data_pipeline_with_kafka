@@ -1,0 +1,32 @@
+version: '3.1'
+
+services:
+  db:
+    image: mysql
+    command: --default-authentication-plugin=mysql_native_password
+    container_name: mysql
+    restart: on-failure
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: my_secret_root_password
+      MYSQL_DATABASE: buy_online_db
+      MYSQL_USER: mysql
+      MYSQL_PASSWORD: mysql
+
+  adminer:
+    image: adminer
+    container_name: adminer
+    restart: always
+    ports:
+      - 8080:8080
+
+  product_updater:
+    build: ./product_updater
+    container_name: product_updater
+    volumns:
+      - ./data:/usr/src/app
+    command:
+      - python
+      - product_updater.py
+
