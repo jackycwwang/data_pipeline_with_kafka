@@ -25,11 +25,11 @@ services:
     build: ./product_updater
     container_name: product_updater
     restart: on-failure
-    volumns:
-      - ./data:/usr/src/app
-    command:
-      - python
-      - product_updater.py
+    volumes:
+      - /data:/usr/src/app/data
+    command: ["python", "product_updater.py"]
+      # - python
+      # - product_updater.py
     depends_on:
       - db
 

@@ -4,12 +4,14 @@ from sqlalchemy.sql import text
 import pymysql
 from datetime import datetime
 import logging
-from tqdm import tqdm
+
 
 logger = logging.getLogger("my_logger")
 
+host_name =  "172.25.184.208"
+
 try:
-  engine = create_engine("mysql+pymysql://mysql:mysql@localhost:3307/buy_online_db")
+  engine = create_engine(f"mysql+pymysql://mysql:mysql@{host_name}:3307/buy_online_db")
   connection = engine.connect()
 except pymysql.Error:
   logger.error(f"Database connection error: {err}")
@@ -44,37 +46,37 @@ df.fillna("Uncategorized", inplace=True)
 # Insert each row into the table product
 try:
     for id, row in df.iterrows():
-    try:
-        uniq_id = str(id+1)
-        # print(f"id={id}")
-        name = row['Product Name']
-        cat = row['Category']
-        price = row['List Price']
-        datetime_str = row['Crawl Timestamp']
-        datetime_obj = datetime.strptime(datetime_str, '%Y-%m-%d %H:%M:%S %z')
-        last_updated = datetime_obj.strftime('%Y-%m-%d %H:%M:%S')
-    except KeyError as key_err:
-        logger.error(f"KeyError: {key_err}")
-        continue
-    except ValueError as value_err:
-        logger.error(f"ValueError: {value_err}")
-        continue
-    except Exception as err:
-        logger.error(f"An unexpected error occurred: {err}")
-        continue
+        try:
+            uniq_id = str(id+1)
+            # print(f"id={id}")
+            name = row['Product Name']
+            cat = row['Category']
+            price = row['List Price']
+            datetime_str = row['Crawl Timestamp']
+            datetime_obj = datetime.strptime(datetime_str, '%Y-%m-%d %H:%M:%S %z')
+            last_updated = datetime_obj.strftime('%Y-%m-%d %H:%M:%S')
+        except KeyError as key_err:
+            logger.error(f"KeyError: {key_err}")
+            continue
+        except ValueError as value_err:
+            logger.error(f"ValueError: {value_err}")
+            continue
+        except Exception as err:
+            logger.error(f"An unexpected error occurred: {err}")
+            continue
 
-    # Insert data into the product table
-    insert_query = product_table.insert().values(
-        id=uniq_id,
-        name=name,
-        category=cat,
-        price=price,
-        last_updated=last_updated
-    )
+        # Insert data into the product table
+        insert_query = product_table.insert().values(
+            id=uniq_id,
+            name=name,
+            category=cat,
+            price=price,
+            last_updated=last_updated
+        )
 
-    # Execute the query
-    connection.execute(insert_query)
-    connection.commit()
+        # Execute the query
+        connection.execute(insert_query)
+        connection.commit()
 
 except Exception as err:
     logger.error(f"An unexpected error occurred: {err}")
