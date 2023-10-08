@@ -1,13 +1,14 @@
 version: '3.1'
 
 services:
-  db:
+  mysqldb:
     image: mysql
+    hostname: mysqldb
     command: --default-authentication-plugin=mysql_native_password
-    container_name: mysql
-    restart: on-failure
-    ports:
-      - "3307:3306"
+    container_name: mysql_container
+    restart: always
+    # ports:
+      # - "3307:3306"
     environment:
       MYSQL_ROOT_PASSWORD: my_secret_root_password
       MYSQL_DATABASE: buy_online_db
@@ -17,7 +18,7 @@ services:
   adminer:
     image: adminer
     container_name: adminer
-    restart: on-failure
+    restart: always
     ports:
       - 8080:8080
 
@@ -26,10 +27,23 @@ services:
     container_name: product_updater
     restart: on-failure
     volumes:
-      - /data:/usr/src/app/data
+      - ./data:/usr/src/app/data
     command: ["python", "product_updater.py"]
-      # - python
-      # - product_updater.py
+    environment:
+      DB_USER: mysql
+      DB_PASSWORD: mysql
+      DB_HOST: mysqldb
+      DB_PORT: 3306
+      DB_NAME: buy_online_db
     depends_on:
-      - db
+      - mysqldb
+
+  producer:
+    build: ./producer
+    container_name: producer
+    restart: on-failure
+    command:
+      - python
+      - producer.py
+
 

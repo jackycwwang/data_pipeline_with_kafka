@@ -1,3 +1,4 @@
+import os
 import pandas as pd
 from sqlalchemy import create_engine, Table, Column, Integer, String, Float, TIMESTAMP, MetaData
 from sqlalchemy.sql import text
@@ -8,10 +9,15 @@ import logging
 
 logger = logging.getLogger("my_logger")
 
-host_name =  "172.25.184.208"
+# host_name =  "172.25.184.208"
+user = os.getenv('DB_USER')
+password = os.getenv('DB_PASSWORD')
+host_name =  os.getenv('DB_HOST')
+port = os.getenv('DB_PORT')
+database = os.getenv('DB_NAME')
 
 try:
-  engine = create_engine(f"mysql+pymysql://mysql:mysql@{host_name}:3307/buy_online_db")
+  engine = create_engine(f"mysql+pymysql://{user}:{password}@{host_name}:{port}/{database}")
   connection = engine.connect()
 except pymysql.Error:
   logger.error(f"Database connection error: {err}")
@@ -39,7 +45,7 @@ metadata.create_all(engine)
 
 
 # Load the data
-file_path = './data/marketing_sample_for_walmart_com-ecommerce__20191201_20191231__30k_data.csv'
+file_path = 'data/marketing_sample_for_walmart_com-ecommerce__20191201_20191231__30k_data.csv'
 df = pd.read_csv(file_path)
 df.fillna("Uncategorized", inplace=True)
 
