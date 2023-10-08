@@ -17,16 +17,19 @@ services:
   adminer:
     image: adminer
     container_name: adminer
-    restart: always
+    restart: on-failure
     ports:
       - 8080:8080
 
   product_updater:
     build: ./product_updater
     container_name: product_updater
+    restart: on-failure
     volumns:
       - ./data:/usr/src/app
     command:
       - python
       - product_updater.py
+    depends_on:
+      - db
 
