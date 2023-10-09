@@ -1,4 +1,4 @@
 __pycache__
-venv
-product_updater/data
+venv/
 data/
+.vscode/
