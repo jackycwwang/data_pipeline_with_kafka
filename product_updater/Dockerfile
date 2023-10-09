@@ -5,6 +5,6 @@ WORKDIR /usr/src/app
 COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY product_updater.py ./
+COPY . .
 
 # CMD ["python", "product_updater.py"]
