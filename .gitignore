@@ -9,3 +9,4 @@ conf/
 producer/outputs/
 consumer/outputs/
 outputs/
+consumer_log/

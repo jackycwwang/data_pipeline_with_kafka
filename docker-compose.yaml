@@ -1,4 +1,4 @@
-version: '3.1'
+version: "3.1"
 
 services:
   mysqldb:
@@ -8,7 +8,7 @@ services:
     container_name: mysql
     restart: always
     ports:
-      - "3307:3306"  # for testing
+      - "3307:3306" # turn on for testing
     environment:
       MYSQL_ROOT_PASSWORD: my_secret_root_password
       MYSQL_DATABASE: buy_online_db
@@ -25,7 +25,7 @@ services:
   product_updater:
     build: ./product_updater
     container_name: product_updater
-    restart: on-failure
+    restart: always
     # volumes:
       # - ./data:/usr/src/app/data
     command: ["python", "product_updater.py"]
@@ -37,11 +37,16 @@ services:
       DB_NAME: buy_online_db
     depends_on:
       - mysqldb
+      - consumer_1
+      - consumer_2
+      - consumer_3
+      - consumer_4
+      - consumer_5
 
   producer:
     build: ./producer
     container_name: producer
-    restart: on-failure
+    restart: always
     command:
       - python
       - producer.py
@@ -55,5 +60,73 @@ services:
       - ./time_track:/usr/src/app/time_track
     depends_on:
       - mysqldb
+      - consumer_1
+      - consumer_2
+      - consumer_3
+      - consumer_4
+      - consumer_5
 
+  consumer_1:
+    build: ./consumer
+    restart: always
+    command:
+      - python
+      - consumer.py
+    environment:
+      CONSUMER_NAME: Consumer_1
+    volumes:
+      - ./consumer_logs/consumer_1:/usr/src/app/consumer_log
+    # depends_on:
+      # - consumer_2
 
+  consumer_2:
+    build: ./consumer
+    restart: always
+    command:
+      - python
+      - consumer.py
+    environment:
+      CONSUMER_NAME: Consumer_2
+    volumes:
+      - ./consumer_logs/consumer_2:/usr/src/app/consumer_log
+    # depends_on:
+      # - consumer_3
+
+  consumer_3:
+    build: ./consumer
+    restart: always
+    command:
+      - python
+      - consumer.py
+    environment:
+      CONSUMER_NAME: Consumer_3
+    volumes:
+      - ./consumer_logs/consumer_3:/usr/src/app/consumer_log
+    # depends_on:
+      # - consumer_4
+
+  consumer_4:
+    build: ./consumer
+    restart: always
+    command:
+      - python
+      - consumer.py
+    environment:
+      CONSUMER_NAME: Consumer_4
+    volumes:
+      - ./consumer_logs/consumer_4:/usr/src/app/consumer_log
+    # depends_on:
+      # - consumer_5
+
+  consumer_5:
+    build: ./consumer
+    restart: always
+    command:
+      - python
+      - consumer.py
+    environment:
+      CONSUMER_NAME: Consumer_5
+    volumes:
+      - ./consumer_logs/consumer_5:/usr/src/app/consumer_log
+    # depends_on:
+      # - producer

@@ -1,0 +1,92 @@
+{
+  "update_logs": [
+    {
+      "id": 2,
+      "name": "Product_2",
+      "category": "CAT_2",
+      "price": 19.68,
+      "last_updated": "2023-10-13 10:02:15",
+      "discount_price": "na"
+    },
+    {
+      "id": 5,
+      "name": "Product_5",
+      "category": "CAT_5",
+      "price": 97.3,
+      "last_updated": "2023-10-13 10:03:55",
+      "discount_price": 77.84
+    },
+    {
+      "id": 7,
+      "name": "Product_7",
+      "category": "CAT_2",
+      "price": 55.6,
+      "last_updated": "2023-10-13 10:11:02",
+      "discount_price": "na"
+    },
+    {
+      "id": 13,
+      "name": "Product_13",
+      "category": "CAT_2",
+      "price": 37.58,
+      "last_updated": "2023-10-13 10:23:59",
+      "discount_price": "na"
+    },
+    {
+      "id": 23,
+      "name": "Product_23",
+      "category": "CAT_5",
+      "price": 37.48,
+      "last_updated": "2023-10-13 13:01:45",
+      "discount_price": 29.98
+    },
+    {
+      "id": 24,
+      "name": "Product_24",
+      "category": "CAT_6",
+      "price": 7.67,
+      "last_updated": "2023-10-13 14:00:32",
+      "discount_price": "na"
+    },
+    {
+      "id": 26,
+      "name": "Product_26",
+      "category": "CAT_2",
+      "price": 41.54,
+      "last_updated": "2023-10-14 10:01:05",
+      "discount_price": "na"
+    },
+    {
+      "id": 33,
+      "name": "Product_33",
+      "category": "CAT_3",
+      "price": 0.66,
+      "last_updated": "2023-10-14 10:13:35",
+      "discount_price": "na"
+    },
+    {
+      "id": 41,
+      "name": "Product_41",
+      "category": "CAT_5",
+      "price": 81.83,
+      "last_updated": "2023-10-14 10:56:42",
+      "discount_price": 65.46
+    },
+    {
+      "id": 46,
+      "name": "Product_46",
+      "category": "CAT_5",
+      "price": 37.2,
+      "last_updated": "2023-10-14 12:03:55",
+      "discount_price": 29.76
+    },
+    {
+      "id": 49,
+      "name": "Product_49",
+      "category": "CAT_7",
+      "price": 35.45,
+      "last_updated": "2023-10-14 14:00:32",
+      "discount_price": "na"
+    }
+  ]
+}

@@ -1,5 +1,6 @@
 import logging
 import json
+import time
 import os
 import threading
 from decimal import *
@@ -20,7 +21,7 @@ from confluent_kafka.serialization import StringSerializer
 import hydra
 from omegaconf import OmegaConf, DictConfig
 
-logger = logging.getLogger("my_logger")
+logger = logging.getLogger("producer_logger")
 
 def delivery_report(err, msg):
     """
@@ -41,9 +42,9 @@ def delivery_report(err, msg):
 
     """
     if err is not None:
-        print("Delivery failed for record {}: {}".format(msg.key(), err))
+        logger.error("Delivery failed for record {}: {}".format(msg.key(), err))
         return
-    print('User record {} successfully produced to key {}, partition [{}], at offset {}'.format(
+    logger.info('Update record [{}] successfully produced to topic {} partition [{}] at offset {}'.format(
         msg.key(), msg.topic(), msg.partition(), msg.offset()))
 
 
@@ -131,8 +132,8 @@ def producer_app(cfg: DictConfig) -> None:
 
     # Define the timezone for the datetime objects
     tz = pytz.timezone('America/New_York')
-    last_read_obj = tz.localize(datetime.strptime(last_read_timestamp, '%Y-%m-%d %H:%M:%S'))
-    # last_read_obj = datetime.strptime(last_read_timestamp, '%Y-%m-%d %H:%M:%S')
+    # last_read_obj = tz.localize(datetime.strptime(last_read_timestamp, '%Y-%m-%d %H:%M:%S'))
+    last_read_obj = datetime.strptime(last_read_timestamp, '%Y-%m-%d %H:%M:%S')
 
     # ----------- Query the database and produce to the kafka cluster topic ----------
     # Execute the SQL query
@@ -144,6 +145,7 @@ def producer_app(cfg: DictConfig) -> None:
     """
     try:
         while True:
+
             cursor.execute(sql_query, (last_read_obj,))
 
             # Fetch all rows from the result set
@@ -154,8 +156,10 @@ def producer_app(cfg: DictConfig) -> None:
             if rows:
                 for row in rows:
                     id, name, category, price, last_updated = row
-                    last_updated = last_updated.astimezone(tz)
+                    logger.info(f"Last_read object: {last_read_obj}")
+                    logger.info(f"Last updated object: {last_updated}")
                     logger.info(f"ID: {id}, Name: {name}, Category: {category}, Price: {price}, Last Updated: {last_updated}")
+                    # last_updated = last_updated.astimezone(tz)
 
                     value = {
                         'id': id,
@@ -170,7 +174,6 @@ def producer_app(cfg: DictConfig) -> None:
                                     value=value,
                                     on_delivery=delivery_report)
                     producer.flush()  # may become blocking in a long run
-                    # sleep(10)
 
                     # find the maximum timestamp in this batch
                     if last_updated > last_read_obj:
@@ -179,6 +182,8 @@ def producer_app(cfg: DictConfig) -> None:
                     with open(filename, 'w') as fp:
                         last_read['last_read_timestamp'] = last_read_obj.strftime('%Y-%m-%d %H:%M:%S')
                         json.dump(last_read, fp)
+            time.sleep(0.5)
+
 
     except Exception as e:
         print(f"An error occurred: {e}")

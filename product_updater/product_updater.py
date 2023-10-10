@@ -84,8 +84,8 @@ try:
           # Execute the query
           connection.execute(insert_query)
           connection.commit()
-          time.sleep(1)
-        time.sleep(20)
+          # time.sleep(0.25)
+        # time.sleep(10)
 
 except Exception as err:
   logger.error(f"An unexpected exception occurred: {err}")

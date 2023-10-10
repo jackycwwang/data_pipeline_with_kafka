@@ -1,0 +1,84 @@
+{
+  "update_logs": [
+    {
+      "id": 1,
+      "name": "Product_1",
+      "category": "CAT_1",
+      "price": 40.6,
+      "last_updated": "2023-10-13 10:01:05",
+      "discount_price": "na"
+    },
+    {
+      "id": 14,
+      "name": "Product_14",
+      "category": "CAT_3",
+      "price": 93.25,
+      "last_updated": "2023-10-13 10:41:00",
+      "discount_price": "na"
+    },
+    {
+      "id": 17,
+      "name": "Product_17",
+      "category": "CAT_5",
+      "price": 52.17,
+      "last_updated": "2023-10-13 10:57:42",
+      "discount_price": 41.74
+    },
+    {
+      "id": 18,
+      "name": "Product_18",
+      "category": "CAT_6",
+      "price": 92.74,
+      "last_updated": "2023-10-13 10:58:42",
+      "discount_price": "na"
+    },
+    {
+      "id": 20,
+      "name": "Product_20",
+      "category": "CAT_3",
+      "price": 85.72,
+      "last_updated": "2023-10-13 11:01:55",
+      "discount_price": "na"
+    },
+    {
+      "id": 21,
+      "name": "Product_21",
+      "category": "CAT_4",
+      "price": 78.66,
+      "last_updated": "2023-10-13 12:03:55",
+      "discount_price": "na"
+    },
+    {
+      "id": 32,
+      "name": "Product_32",
+      "category": "CAT_3",
+      "price": 10.35,
+      "last_updated": "2023-10-14 10:11:02",
+      "discount_price": "na"
+    },
+    {
+      "id": 34,
+      "name": "Product_34",
+      "category": "CAT_4",
+      "price": 59.68,
+      "last_updated": "2023-10-14 10:13:36",
+      "discount_price": "na"
+    },
+    {
+      "id": 36,
+      "name": "Product_36",
+      "category": "CAT_6",
+      "price": 8.07,
+      "last_updated": "2023-10-14 10:14:48",
+      "discount_price": "na"
+    },
+    {
+      "id": 43,
+      "name": "Product_43",
+      "category": "CAT_7",
+      "price": 36.83,
+      "last_updated": "2023-10-14 10:58:42",
+      "discount_price": "na"
+    }
+  ]
+}
