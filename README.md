@@ -20,12 +20,13 @@ A data pipeline is a fundamental component of modern data-driven organizations. 
 
 The data pipeline architecture for this project is designed to efficiently manage the flow of data across various stages, from updating product records in a MySQL database to final processing and storage. It starts with the "Product_updater," responsible for making updates to product records within the MySQL database. Once these updates occur, the "Producer" component ingests the data changes from the database, records a timestamp in a JSON log, and dispatches the updated messages to a designated Kafka cluster topic known as "product_updates." Within this Kafka topic, a "Consumer Group" is formed, comprising five consumers. Each consumer within the group plays a crucial role by receiving, filtering, and performing transformations on the incoming messages. After the necessary processing, these consumers independently store the processed data in their respective JSON logs. The pipeline's architecture is streamlined, scalable, and designed for efficient data management, ensuring that updates to product records are securely recorded and processed within the Kafka ecosystem.
 <br>
+<br>
 <!-- <div style="text-align:center">
   <img src="images/data-pipeline-arch.png" alt="pipeline_architecture" width="70%">
 </div> -->
 ![image 1](images/data-pipeline-arch.png)
 <br>
-
+<br>
 
 [This architectural diagram](images/data-pipeline-arch.png) illustrates the various components and their interactions within the data pipeline. This visual representation provides a clear overview of the entire system, showcasing how data flows through the different stages, from database updates to final JSON log storage by the consumers.
 
@@ -73,17 +74,19 @@ Having these prerequisites in place is essential for the successful operation of
 1. Directly beneath each `producer` and `consumer` directory, establish a new directory titled `conf`. Within this `conf` directory, store your Kafka and Schema Registry credentials and configuration details in a `config.yaml` file, structured as follows:
 
 <br>
-<div style="text-align:center">
+<!-- <div style="text-align:center">
   <img src="images/config-yaml.png" alt="pipeline_architecture" width="50%">
-</div>
+</div> -->
+![config_yaml](images/config-yaml.png)
 <br>
 
 2. Ensure that the value of `last_read_timestamp` in [last_read_timestamp.json](time_track/last_read_timestamp.json) is reset to `null` for each individual implementation, such that it accurately reflects the specific timestamp requirements.
 
 <br>
-<div style="text-align:center">
+<!-- <div style="text-align:center">
   <img src="images/last-read-timestamp.png" alt="pipeline_architecture" width="40%">
-</div>
+</div> -->
+![last-read](images/last-read-timestamp.png)
 <br>
 
 1. Ensure that the five subdirectories, as described in the `Project Structure` section, are located within the `consumer_logs` directory.
