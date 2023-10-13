@@ -20,10 +20,12 @@ A data pipeline is a fundamental component of modern data-driven organizations. 
 
 The data pipeline architecture for this project is designed to efficiently manage the flow of data across various stages, from updating product records in a MySQL database to final processing and storage. It starts with the "Product_updater," responsible for making updates to product records within the MySQL database. Once these updates occur, the "Producer" component ingests the data changes from the database, records a timestamp in a JSON log, and dispatches the updated messages to a designated Kafka cluster topic known as "product_updates." Within this Kafka topic, a "Consumer Group" is formed, comprising five consumers. Each consumer within the group plays a crucial role by receiving, filtering, and performing transformations on the incoming messages. After the necessary processing, these consumers independently store the processed data in their respective JSON logs. The pipeline's architecture is streamlined, scalable, and designed for efficient data management, ensuring that updates to product records are securely recorded and processed within the Kafka ecosystem.
 <br>
-<div style="text-align:center">
+<!-- <div style="text-align:center">
   <img src="images/data-pipeline-arch.png" alt="pipeline_architecture" width="70%">
-</div>
+</div> -->
+![image 1](images/data-pipeline-arch.png)
 <br>
+
 
 [This architectural diagram](images/data-pipeline-arch.png) illustrates the various components and their interactions within the data pipeline. This visual representation provides a clear overview of the entire system, showcasing how data flows through the different stages, from database updates to final JSON log storage by the consumers.
 
