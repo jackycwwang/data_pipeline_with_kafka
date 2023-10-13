@@ -7,4 +7,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-# CMD ["python", "product_updater.py"]
+# ENTRYPOINT [ "sh", "-c", "python wait_for_mysql.py && python product_updater.py"]

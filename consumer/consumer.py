@@ -13,6 +13,8 @@ from omegaconf import OmegaConf, DictConfig
 
 consumer_name = os.getenv('CONSUMER_NAME')
 
+log_format = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+logging.basicConfig(level=logging.INFO, format=log_format)
 logger = logging.getLogger("consumer_logger")
 
 @hydra.main(version_base=None, config_path='conf', config_name='config')
@@ -107,7 +109,7 @@ def consumer_app(cfg: DictConfig):
         except Exception as err:
           print(f"An error occurred: {err}")
 
-        logger.info('Successfully consumed by {} with value {}'.format(consumer_name, msg.key(), msg.value()))
+        logger.info('Id {} is successfully consumed by {}.'.format(value['id'], consumer_name))
 
         # time.sleep(30)
         #consumer.commitSync()

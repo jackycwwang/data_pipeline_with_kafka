@@ -2,9 +2,9 @@ version: "3.1"
 
 services:
   mysqldb:
-    image: mysql
+    image: mysql:5.7.43
     hostname: mysqldb
-    command: --default-authentication-plugin=mysql_native_password
+    # command: --default-authentication-plugin=mysql_native_password
     container_name: mysql
     restart: always
     ports:
@@ -25,10 +25,10 @@ services:
   product_updater:
     build: ./product_updater
     container_name: product_updater
-    restart: always
-    # volumes:
-      # - ./data:/usr/src/app/data
-    command: ["python", "product_updater.py"]
+    restart: on-failure
+    volumes:
+      - ./data:/usr/src/app/data
+    command: ["sh", "-c", "python wait_for_mysql.py && python product_updater.py 2>&1"]
     environment:
       DB_USER: mysql
       DB_PASSWORD: mysql
@@ -46,10 +46,11 @@ services:
   producer:
     build: ./producer
     container_name: producer
-    restart: always
+    restart: on-failure
     command:
-      - python
-      - producer.py
+      - sh
+      - -c
+      - "python wait_for_mysql.py && python producer.py 2>&1"
     environment:
       DB_USER: mysql
       DB_PASSWORD: mysql
@@ -76,8 +77,6 @@ services:
       CONSUMER_NAME: Consumer_1
     volumes:
       - ./consumer_logs/consumer_1:/usr/src/app/consumer_log
-    # depends_on:
-      # - consumer_2
 
   consumer_2:
     build: ./consumer
@@ -89,8 +88,6 @@ services:
       CONSUMER_NAME: Consumer_2
     volumes:
       - ./consumer_logs/consumer_2:/usr/src/app/consumer_log
-    # depends_on:
-      # - consumer_3
 
   consumer_3:
     build: ./consumer
@@ -102,8 +99,6 @@ services:
       CONSUMER_NAME: Consumer_3
     volumes:
       - ./consumer_logs/consumer_3:/usr/src/app/consumer_log
-    # depends_on:
-      # - consumer_4
 
   consumer_4:
     build: ./consumer
@@ -115,8 +110,6 @@ services:
       CONSUMER_NAME: Consumer_4
     volumes:
       - ./consumer_logs/consumer_4:/usr/src/app/consumer_log
-    # depends_on:
-      # - consumer_5
 
   consumer_5:
     build: ./consumer
@@ -128,5 +121,4 @@ services:
       CONSUMER_NAME: Consumer_5
     volumes:
       - ./consumer_logs/consumer_5:/usr/src/app/consumer_log
-    # depends_on:
-      # - producer
+

@@ -12,4 +12,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-# CMD ["python", "producer.py"]
+# CMD ["sh", "-c", "python wait_for_mysql.py && python producer.py"]

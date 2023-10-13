@@ -21,7 +21,10 @@ from confluent_kafka.serialization import StringSerializer
 import hydra
 from omegaconf import OmegaConf, DictConfig
 
-logger = logging.getLogger("producer_logger")
+log_format = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+logging.basicConfig(level=logging.INFO, format=log_format)
+logger = logging.getLogger("producer")
+
 
 def delivery_report(err, msg):
     """
@@ -42,7 +45,8 @@ def delivery_report(err, msg):
 
     """
     if err is not None:
-        logger.error("Delivery failed for record {}: {}".format(msg.key(), err))
+        logger.error(
+            "Delivery failed for record {}: {}".format(msg.key(), err))
         return
     logger.info('Update record [{}] successfully produced to topic {} partition [{}] at offset {}'.format(
         msg.key(), msg.topic(), msg.partition(), msg.offset()))
@@ -64,7 +68,8 @@ def producer_app(cfg: DictConfig) -> None:
 
     # Fetch the latest Avro schema for the value
     subject_name = 'product_updates-value'
-    schema_str = schema_registry_client.get_latest_version(subject_name).schema.schema_str
+    schema_str = schema_registry_client.get_latest_version(
+        subject_name).schema.schema_str
     # print('schema_str:',schema_str)
 
     # Create Avro Serializer for the value
@@ -83,9 +88,9 @@ def producer_app(cfg: DictConfig) -> None:
     }
     try:
         producer = SerializingProducer(kafka_config)
+        logger.info("Kafka connection has been successfully established!")
     except Exception as err:
         logger.error(f"Kafka cluster connection error: {err}")
-
 
     # ---------- Read the timestamp that the data was last fetched from the database ---------
     filename = "time_track/last_read_timestamp.json"
@@ -100,22 +105,15 @@ def producer_app(cfg: DictConfig) -> None:
     # and save it to the json file
     if last_read_timestamp is None:
         with open(filename, 'w') as fp:
-            last_read_timestamp = '2018-01-01 00:00:00'
+            last_read_timestamp = '2015-01-01 00:00:00'
             last_read['last_read_timestamp'] = last_read_timestamp
             json.dump(last_read, fp)
 
+    last_read_obj = datetime.strptime(last_read_timestamp, '%Y-%m-%d %H:%M:%S')
+
     # -------- Define your database connection parameters ----------
 
-    # settings for docker compose
-    db_config = {
-        "user": os.getenv('DB_USER'),
-        "password": os.getenv('DB_PASSWORD'),
-        "host": os.getenv('DB_HOST'),
-        "port": int(os.getenv('DB_PORT')),
-        "database": os.getenv('DB_NAME'),
-    }
-
-    # settings for testing
+    # Settings for local testing
     # db_config = {
     #     "user": "mysql",
     #     "password": "mysql",
@@ -124,41 +122,68 @@ def producer_app(cfg: DictConfig) -> None:
     #     "database": "buy_online_db",
     # }
 
+    # Settings for docker compose
+    db_config = {
+        "user": os.getenv('DB_USER'),
+        "password": os.getenv('DB_PASSWORD'),
+        "host": os.getenv('DB_HOST'),
+        "port": os.getenv('DB_PORT'),
+        "database": os.getenv('DB_NAME'),
+    }
+
     # Establish a connection to the database
-    connection = mysql.connector.connect(**db_config)
+    try:
+        connection = mysql.connector.connect(**db_config)
+        logger.info("MySQL connection has been successfully established!")
+    except mysql.connector.Error as e:
+        logger.error("MySQL connection has failed!")
 
     # Create a cursor to execute SQL queries
     cursor = connection.cursor()
 
-    # Define the timezone for the datetime objects
-    tz = pytz.timezone('America/New_York')
-    # last_read_obj = tz.localize(datetime.strptime(last_read_timestamp, '%Y-%m-%d %H:%M:%S'))
-    last_read_obj = datetime.strptime(last_read_timestamp, '%Y-%m-%d %H:%M:%S')
-
     # ----------- Query the database and produce to the kafka cluster topic ----------
     # Execute the SQL query
-    sql_query = """
+    sql_query = r"""
         SELECT id, name, category, price, last_updated
         FROM product
         WHERE last_updated > %s
         limit 10
     """
+    query_count = 0
     try:
+        time.sleep(5.0)
         while True:
-
+            # logger.info(f"last_read_obj: {last_read_obj}")
             cursor.execute(sql_query, (last_read_obj,))
+            logger.info(cursor.statement)
 
             # Fetch all rows from the result set
             rows = cursor.fetchall()
             logger.info(f"----- Fetch row count: {cursor.rowcount} -----")
+            if not cursor.rowcount:
+                time.sleep(3.0)
+                query_count += 1
+                if query_count == 5:
+                    logger.info("Close and re-establish the connection")
+                    # Close the connection and reconnect to database
+                    try:
+                        cursor.close()
+                        connection.close()
+                        connection = mysql.connector.connect(**db_config)
+                        cursor = connection.cursor()
+                        logger.info("Database connection re-established!")
+                    except mysql.connector.Error as err:
+                        logger.error("Error connecting to database: %s", err)
+
 
             # Iterate through the rows and print the values
             if rows:
                 for row in rows:
                     id, name, category, price, last_updated = row
-                    logger.info(f"Last_read object: {last_read_obj}")
-                    logger.info(f"Last updated object: {last_updated}")
-                    logger.info(f"ID: {id}, Name: {name}, Category: {category}, Price: {price}, Last Updated: {last_updated}")
+                    # logger.info(f"Last_read object: {last_read_obj}")
+                    # logger.info(f"Last updated object: {last_updated}")
+                    logger.info(
+                        f"ID: {id}, Name: {name}, Category: {category}, Price: {price}, Last Updated: {last_updated}")
                     # last_updated = last_updated.astimezone(tz)
 
                     value = {
@@ -170,9 +195,9 @@ def producer_app(cfg: DictConfig) -> None:
                     }
 
                     producer.produce(topic='product_updates',
-                                    key=str(id),
-                                    value=value,
-                                    on_delivery=delivery_report)
+                                     key=str(id),
+                                     value=value,
+                                     on_delivery=delivery_report)
                     producer.flush()  # may become blocking in a long run
 
                     # find the maximum timestamp in this batch
@@ -180,10 +205,10 @@ def producer_app(cfg: DictConfig) -> None:
                         last_read_obj = last_updated
 
                     with open(filename, 'w') as fp:
-                        last_read['last_read_timestamp'] = last_read_obj.strftime('%Y-%m-%d %H:%M:%S')
+                        last_read['last_read_timestamp'] = last_read_obj.strftime(
+                            '%Y-%m-%d %H:%M:%S')
                         json.dump(last_read, fp)
             time.sleep(0.5)
-
 
     except Exception as e:
         print(f"An error occurred: {e}")
@@ -192,6 +217,8 @@ def producer_app(cfg: DictConfig) -> None:
         # Close the cursor and the database connection
         cursor.close()
         connection.close()
+        # exit(0)
+
 
 if __name__ == "__main__":
     producer_app()

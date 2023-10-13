@@ -1,6 +1,5 @@
 __pycache__
 venv/
-data/
 .vscode/
 producer/time_track/
 producer/conf/
@@ -10,3 +9,4 @@ producer/outputs/
 consumer/outputs/
 outputs/
 consumer_log/
+product_updater/data
