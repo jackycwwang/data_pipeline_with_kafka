@@ -61,7 +61,6 @@ This project structure organizes the components, data, and logs related to your 
 
 ## Prerequisites
 
-- **Python 3.8 or Above**: Python version 3.8 or higher is required for running this project's codebase effectively.
 - **Docker Runtime and Docker Compose**: Docker runtime and Docker Compose are necessary for managing and orchestrating the Docker containers used in this project.
 - **Kafka Cluster**: A functional Kafka cluster should be set up and running. In my case, Confluent Kafka is used for this project.
   - Establish a Kafka cluster and proceed to generate a topic named `product_updates` configured with 10 partitions.
