@@ -113,6 +113,7 @@ Here are the some example results:
 </div> -->
 <!-- <br> -->
 ![data-transformation](images/data-transformation.png)
+
 The category is now capitalized, and a new column named `discount_price` has been introduced. For each item falling under the category `CAT_5`, the `discount_price` column reflects a 20% reduction from the original price.
 
 ## Afterwords
