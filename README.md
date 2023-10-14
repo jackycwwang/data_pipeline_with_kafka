@@ -80,11 +80,11 @@ Having these prerequisites in place is essential for the successful operation of
 <!-- <br> -->
 ![config-yaml](images/config-yaml.png)
 
-1. Ensure that the value of `last_read_timestamp` in [last_read_timestamp.json](time_track/last_read_timestamp.json) is reset to `null` for each individual implementation, such that it accurately reflects the specific timestamp requirements.
+2. Ensure that the value of `last_read_timestamp` in [last_read_timestamp.json](time_track/last_read_timestamp.json) is reset to `null` for each individual implementation, such that it accurately reflects the specific timestamp requirements.
 
 ![last-read](images/last-read-timestamp.png)
 
-1. Ensure that the five subdirectories, as described in the `Project Structure` section, are located within the `consumer_logs` directory.
+3. Ensure that the five subdirectories, as described in the `Project Structure` section, are located within the `consumer_logs` directory.
 
 ## Launching the Project
 
